@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe - X O Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #eee;
+      font-family: sans-serif;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-template-rows: repeat(3, 120px);
+      gap: 10px;
+      background: #ccc;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .cell {
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+    .cell:hover {
+      background: #ddd;
+    }
+    .cell.X {
+      color: #ff4500;
+    }
+    .cell.O {
+      color: #222;
+    }
+    #status {
+      position: absolute;
+      top: 60px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #em {
+      position: absolute;
+      top: 30px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #reset {
+      position: absolute;
+      bottom: 40px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      background: #333;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #reset:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+   <div id="em" >Lươn Cẩm Tú</div>
+  <div id="status">Lượt: X</div>
+  <div class="board" id="board"></div>
+  <button id="reset">Chơi lại</button>
+
+  <script>
+    const board = document.getElementById("board");
+    const statusText = document.getElementById("status");
+    const resetBtn = document.getElementById("reset");
+    let currentPlayer = "X";
+    let cells = ["", "", "", "", "", "", "", "", ""];
+    let gameOver = false;
+
+    // Vẽ bảng
+    function createBoard() {
+      board.innerHTML = "";
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.addEventListener("click", () => handleClick(i));
+        board.appendChild(cell);
+      }
+    }
+
+    function handleClick(index) {
+      if (cells[index] !== "" || gameOver) return;
+      cells[index] = currentPlayer;
+      const cell = board.children[index];
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer);
+
+      if (checkWin()) {
+        statusText.textContent = `Người thắng: ${currentPlayer}`;
+        gameOver = true;
+        return;
+      }
+      if (cells.every(cell => cell !== "")) {
+        statusText.textContent = "Hòa!";
+        gameOver = true;
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      statusText.textContent = `Lượt: ${currentPlayer}`;
+    }
+
+    function checkWin() {
+      const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+      return winPatterns.some(pattern => {
+        const [a,b,c] = pattern;
+        return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+      });
+    }
+
+    resetBtn.addEventListener("click", () => {
+      cells = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameOver = false;
+      statusText.textContent = "Lượt: X";
+      createBoard();
+    });
+
+    createBoard();
+  </script>
+</body>
+</html>
